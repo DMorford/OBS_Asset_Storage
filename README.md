@@ -1,6 +1,6 @@
-# OBS More Incredible Assets
+# OBS_Asset_Storage
 
-This package contains the OBS lower-third overlay and related assets in one place.
+This repo contains OBS overlays and related assets in one place.
 
 Contents:
 - overlays/ — the original browser overlays (like the lower third)
@@ -8,7 +8,7 @@ Contents:
 
 Usage (recommended):
 - In OBS Browser Source, use Local File and point to overlays/lower-third.html.
-- Or host via the app and use http://localhost:3000/obs/lower-third.html.
+- Or host via an app and use http://localhost:3000/obs/lower-third.html.
 
 Notes:
 - overlays/assets contains example logo/guitar images; replace with your own.
