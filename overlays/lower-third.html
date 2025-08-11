@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lower Third Overlay</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: transparent; font-family: 'Nunito', sans-serif; overflow: hidden; width: 100vw; height: 100vh; }
+
+  .lower-third { position: fixed; bottom: 40px; left: -100%; width: 880px; height: 170px; background: linear-gradient(135deg, #8B4513 0%, #CD853F 25%, #D2691E 50%, #FF8C42 75%, #8B4513 100%); border-radius: 18px; box-shadow: 0 8px 32px rgba(255, 107, 53, 0.3); animation: slideIn 1s ease-out 0.5s forwards; overflow: visible; }
+
+    .lower-third::before { content: ''; position: absolute; inset: 0; background: linear-gradient(45deg, transparent 30%, rgba(255, 107, 53, 0.1) 50%, transparent 70%); animation: shimmer 3s ease-in-out infinite; }
+
+  .content { display: flex; align-items: center; justify-content: center; padding: 20px 35px; height: 100%; position: relative; z-index: 2; gap: 30px; }
+  /* Faint guitar watermark */
+  .gtr-watermark { position: absolute; left: 245px; bottom: -222px; width: 402px; height: auto; opacity: .14; transform: rotate(77deg); z-index: 1; pointer-events: none; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2)); display: none; clip-path: inset(0 0 0 0); }
+
+  .text-section { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 50px; transform: translateY(10px); }
+  .main-text { font-size: 60px; font-weight: 900; color: #2F1B14; text-shadow: 2px 2px 4px rgba(255,255,255,0.35); letter-spacing: 1.5px; line-height: 0.95; white-space: nowrap; }
+  .sub-text { margin-top: 4px; font-size: 28px; font-weight: 700; color: #5D2E17; text-shadow: 1px 1px 2px rgba(255,255,255,0.25); letter-spacing: 1px; }
+
+  .subscribe-btn { background: linear-gradient(135deg, #A0522D, #8B4513); border: 2px solid #5D2E17; border-radius: 22px; padding: 16px 34px; font-weight: 800; font-size: 18px; color: #F4E4BC; cursor: pointer; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); box-shadow: 0 4px 15px rgba(139,69,19,0.3); transition: all 0.25s ease; position: relative; overflow: visible; min-width: 170px; }
+    .subscribe-btn::before { content: ''; position: absolute; top: 50%; left: 50%; width: 0; height: 0; background: rgba(255,255,255,0.2); border-radius: 50%; transition: all 0.6s ease; transform: translate(-50%, -50%); }
+    .subscribe-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(139,69,19,0.5); }
+    .subscribe-btn:hover::before { width: 300px; height: 300px; }
+  .subscribe-btn.clicked { background: linear-gradient(135deg, #FFD700, #FFA500) !important; border-color: #FF8C00 !important; color: #2F1B14 !important; animation: celebrate 0.6s ease-out; box-shadow: 0 6px 25px rgba(255,215,0,0.85) !important; transform: scale(1.06); }
+    .btn-text { position: relative; z-index: 2; }
+
+  /* Optional logo */
+  .logo-wrap { position: relative; width: 120px; height: 120px; flex: 0 0 auto; display: none; align-items: center; justify-content: center; margin-left: 45px; margin-top: 10px; }
+  .logo-wrap img { max-width: 120px; max-height: 120px; object-fit: contain; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3)); border-radius: 8px; }
+
+    .auto-hide { animation: slideOut 1s ease-in forwards; }
+
+    @keyframes slideIn { from { left: -100%; } to { left: 50px; } }
+    @keyframes slideOut { from { left: 50px; opacity: 1; } to { left: -100%; opacity: 0; } }
+    @keyframes shimmer { 0%,100% { transform: translateX(-100%); } 50% { transform: translateX(100%); } }
+    @keyframes celebrate { 0%,100% { transform: scale(1.05); } 25% { transform: scale(1.15) rotate(-3deg); } 75% { transform: scale(1.15) rotate(3deg); } }
+
+    .firework { position: absolute; width: 4px; height: 4px; background: #FFD700; border-radius: 50%; pointer-events: none; }
+    @keyframes sparkleShoot { 0% { transform: translate(0,0) scale(0); opacity: 1; } 100% { transform: translate(var(--x), var(--y)) scale(1); opacity: 0; } }
+
+  .sparkle { position: absolute; width: 4px; height: 4px; background: #F4E4BC; border-radius: 50%; animation: sparkleFloat 2.2s ease-in-out infinite; filter: drop-shadow(0 0 6px rgba(244,228,188,0.9)); }
+    @keyframes sparkleFloat { 0%,100% { transform: translateY(0) scale(0.8); opacity: 0.6; } 50% { transform: translateY(-10px) scale(1.2); opacity: 1; } }
+
+    .sparkle:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
+    .sparkle:nth-child(2) { top: 65%; left: 18%; animation-delay: 0.4s; }
+    .sparkle:nth-child(3) { top: 30%; right: 20%; animation-delay: 0.8s; }
+    .sparkle:nth-child(4) { top: 50%; right: 10%; animation-delay: 1.2s; }
+    .sparkle:nth-child(5) { top: 15%; left: 40%; animation-delay: 1.6s; }
+    .sparkle:nth-child(6) { top: 70%; left: 55%; animation-delay: 2.0s; }
+    .sparkle:nth-child(7) { top: 35%; left: 75%; animation-delay: 2.4s; }
+    .sparkle:nth-child(8) { top: 55%; left: 32%; animation-delay: 2.8s; }
+
+    /* Hand that comes from outside the box to the button */
+  .hand-cursor { position: absolute; left: -120px; top: 50%; transform: translateY(-50%) rotate(20deg); font-size: 56px; opacity: 0; z-index: 20; pointer-events: none; transition: left 3s ease-in-out, top 3s ease-in-out, opacity .6s ease-in; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35)); }
+  .hand-tap { animation: handTap .5s ease-out 1; }
+  @keyframes handTap { 0% { transform: translateY(-50%) rotate(20deg) scale(1);} 40% { transform: translateY(-55%) rotate(20deg) scale(0.9);} 100% { transform: translateY(-50%) rotate(20deg) scale(1);} }
+  </style>
+</head>
+<body>
+  <div class="lower-third" id="lowerThird">
+    <div class="sparkle"></div>
+    <div class="sparkle"></div>
+    <div class="sparkle"></div>
+    <div class="sparkle"></div>
+    <div class="sparkle"></div>
+    <div class="sparkle"></div>
+    <div class="sparkle"></div>
+    <div class="sparkle"></div>
+    <div class="content">
+  <img id="guitarImg" class="gtr-watermark" alt="guitar watermark" />
+  <div class="logo-wrap" id="logoWrap"><img id="logoImg" alt="logo"/></div>
+      <div class="text-section">
+  <div class="main-text">LIKE & SUBSCRIBE</div>
+        <div class="sub-text">Support the channel - Help us Grow!</div>
+      </div>
+      <button class="subscribe-btn" id="subscribeBtn">
+        <span class="btn-text">SUBSCRIBE</span>
+      </button>
+  <div class="hand-cursor" id="handCursor">👆</div>
+    </div>
+  </div>
+
+  <script>
+    const subscribeBtn = document.getElementById('subscribeBtn');
+    const lowerThird = document.getElementById('lowerThird');
+    const hand = document.getElementById('handCursor');
+    let hasBeenClicked = false;
+    let clickTimer = null;
+
+    // Optional logo auto-loader: shows the first found asset if present; can be overridden via ?logo=filename.ext
+    (function loadLogoIfPresent() {
+      const candidates = [
+        'assets/logo.png', 'assets/logo.svg', 'assets/logo.webp', 'assets/logo.jpg', 'assets/logo.jpeg'
+      ];
+      const base = window.location.pathname.replace(/[^/]+$/, '');
+      const wrap = document.getElementById('logoWrap');
+      const img = document.getElementById('logoImg');
+      const params = new URLSearchParams(window.location.search);
+      const override = params.get('logo');
+      let done = false;
+      if (override) {
+        const src = 'assets/' + override;
+        const test = new Image();
+        test.onload = () => {
+          if (done) return;
+          done = true;
+          img.src = base + src;
+          wrap.style.display = 'flex';
+          console.log('[overlay] logo loaded:', src);
+        };
+        test.onerror = () => { console.warn('[overlay] logo not found:', src); };
+        test.src = base + src + '?cachebust=' + Date.now();
+      }
+      // try sequentially; the first that loads will show (if no override or override failed)
+      candidates.forEach(src => {
+        if (done) return;
+        const test = new Image();
+        test.onload = () => {
+          if (done) return;
+          done = true;
+          img.src = base + src;
+          wrap.style.display = 'flex';
+          console.log('[overlay] logo loaded:', src);
+        };
+        test.onerror = () => { /* ignore */ };
+        test.src = base + src + '?cachebust=' + Date.now();
+      });
+    })();
+
+    // Optional guitar watermark auto-loader; can be overridden via ?guitar=filename.ext
+    (function loadGuitarIfPresent() {
+      const candidates = [
+        'assets/guitar.png','assets/guitar.jpg','assets/guitar.jpeg','assets/guitar.webp','assets/guitar.svg',
+        'assets/watermark.png','assets/watermark.jpg','assets/watermark.jpeg','assets/watermark.webp','assets/watermark.svg'
+      ];
+      const base = window.location.pathname.replace(/[^/]+$/, '');
+  const img = document.getElementById('guitarImg');
+      const params = new URLSearchParams(window.location.search);
+      const override = params.get('guitar');
+      let done = false;
+      if (override) {
+        const src = 'assets/' + override;
+        const test = new Image();
+        test.onload = () => {
+          if (done) return;
+          done = true;
+          img.src = base + src;
+          img.style.display = 'block';
+          console.log('[overlay] guitar loaded:', src);
+          requestAnimationFrame(applyGuitarClip);
+        };
+        test.onerror = () => { console.warn('[overlay] guitar not found:', src); };
+        test.src = base + src + '?cachebust=' + Date.now();
+      }
+      candidates.forEach(src => {
+        if (done) return;
+        const test = new Image();
+        test.onload = () => {
+          if (done) return;
+          done = true;
+          img.src = base + src;
+          img.style.display = 'block';
+          console.log('[overlay] guitar loaded:', src);
+          requestAnimationFrame(applyGuitarClip);
+        };
+        test.onerror = () => { /* ignore */ };
+        test.src = base + src + '?cachebust=' + Date.now();
+      });
+    })();
+
+    // Crop guitar image to the top of the main text line and recompute on resize
+    function applyGuitarClip() {
+      const g = document.getElementById('guitarImg');
+      if (!g || g.style.display === 'none') return;
+      const lower = document.getElementById('lowerThird');
+      const main = document.querySelector('.main-text');
+      if (!lower || !main) return;
+      const lowerRect = lower.getBoundingClientRect();
+      const mainRect = main.getBoundingClientRect();
+      const imgRect = g.getBoundingClientRect();
+      const params = new URLSearchParams(window.location.search);
+      const headroom = parseInt(params.get('gtrHeadroom') || '16', 10); // px headroom to keep tuner area visible
+  const clipEnabled = ['1', 'true', 'yes'].includes((params.get('gtrClip') || '').toLowerCase());
+  const clipTopEnabled = ['1', 'true', 'yes'].includes((params.get('gtrClipTop') || '').toLowerCase());
+      // Top: crop to top of lower-third (with headroom to protect headstock)
+  const hideTopPx = clipTopEnabled ? Math.max(0, (lowerRect.top - imgRect.top) - headroom) : 0;
+      // Bottom: crop to bottom of lower-third; preserve the subscribe button area (no right/left cropping)
+  const hideBottomPx = clipEnabled ? Math.max(0, (imgRect.bottom - lowerRect.bottom)) : 0;
+  // clip-path inset(top right bottom left) in px; use large negative left/right to avoid side cropping on rotated image
+  g.style.clipPath = `inset(${hideTopPx}px -10000px ${hideBottomPx}px -10000px)`;
+    }
+
+    window.addEventListener('resize', () => {
+      applyGuitarClip();
+    });
+
+    subscribeBtn.addEventListener('click', function() {
+      if (hasBeenClicked) return;
+      hasBeenClicked = true;
+
+  this.classList.add('clicked');
+      const textSpan = this.querySelector('.btn-text');
+  textSpan.textContent = "YOU'RE COOL!!!";
+  hand.style.display = 'none';
+
+      try {
+        const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmYeBjiK0e3SeC8EIHeB8eGeRAwTZ7zp7ahUFApAjd/zuGQdBjCB5PPrjz4MFFN58OWeRgsUXrTp56dQEgM+hd73ulQIBiZkm+nWdCwOGXu+4ut+OBILUabn5rFqIQU3jdz5xHMpBCZ+vfPZkzgMES5wzuWyYBoGO4He+sp3NwUiY7Lx3pU7DAw6jtzq1XUIKM3M7H0z1EMNKXv+7bKPJRO8A6h20vD5sHYuBnMpOKg1eUBPJ3nKSZgcZKONHQKM1LRz9WY6A51L1OMYJ3b35NQJ+1K27PCBeSYFKHjH8t5/OBGTA8TxvZU6DhJWp+DVhDUKLGI5vvL6sX6FEAnKsGZA9QJZnQFgUcxz8oKGKwqK4p7H2nAqBWt1hUhI');
+        audio.volume = 0.3;
+        audio.play().catch(() => {});
+      } catch {}
+
+      createFireworks(this, 28);
+      
+      // Only auto-hide if the URL parameter is set
+      const urlParams = new URLSearchParams(window.location.search);
+      const autoHide = urlParams.get('autoHide') === '1';
+      if (autoHide) {
+        setTimeout(() => { lowerThird.classList.add('auto-hide'); }, 3000);
+      }
+    });
+
+  function createFireworks(button, count = 20) {
+      const colors = ['#FFD700', '#FF6B35', '#FF1493', '#00FF7F', '#1E90FF'];
+      for (let i = 0; i < count; i++) {
+        const firework = document.createElement('div');
+        firework.className = 'firework';
+        firework.style.background = colors[Math.floor(Math.random() * colors.length)];
+        const size = 4 + Math.floor(Math.random() * 4);
+        firework.style.width = size + 'px';
+        firework.style.height = size + 'px';
+  const angle = (i / count) * 2 * Math.PI;
+        const distance = 55 + Math.random() * 55;
+        const x = Math.cos(angle) * distance;
+        const y = Math.sin(angle) * distance;
+        firework.style.setProperty('--x', x + 'px');
+        firework.style.setProperty('--y', y + 'px');
+        firework.style.left = '50%';
+        firework.style.top = '50%';
+        firework.style.animation = 'sparkleShoot ' + (0.7 + Math.random() * 0.6).toFixed(2) + 's ease-out forwards';
+        button.appendChild(firework);
+        setTimeout(() => firework.remove(), 1000);
+      }
+    }
+
+    // Animate hand from outside the box to the subscribe button
+    function animateHandToButton() {
+      const contentEl = document.querySelector('.content');
+      const contentRect = contentEl.getBoundingClientRect();
+      const btnRect = subscribeBtn.getBoundingClientRect();
+      const targetLeft = (btnRect.left - contentRect.left) + Math.min(btnRect.width - 24, 110);
+      const targetTop = (btnRect.top - contentRect.top) + btnRect.height / 2 - 10; // center vertically
+      hand.style.top = targetTop + 'px';
+      hand.style.left = '-120px';
+      // allow paint, then move
+      requestAnimationFrame(() => {
+        hand.style.opacity = '1';
+        hand.style.left = targetLeft + 'px';
+        // tap animation when arriving, then trigger the actual click
+  const travelMs = 3000;
+        setTimeout(() => {
+          hand.classList.add('hand-tap');
+          // trigger click slightly after the tap starts
+          setTimeout(() => { subscribeBtn.click(); }, 180);
+          setTimeout(() => hand.classList.remove('hand-tap'), 500);
+          // retract hand after a short pause
+          setTimeout(() => { hand.style.left = '-160px'; hand.style.opacity = '0'; }, 900);
+        }, travelMs);
+      });
+    }
+
+    // Start hand animation once the lower third has slid in
+    lowerThird.addEventListener('animationend', (e) => {
+      if (e.animationName === 'slideIn') {
+        // let the banner sit for a couple seconds, then move the hand in
+        setTimeout(animateHandToButton, 2000);
+      }
+    });
+
+    // Recalculate on resize in case overlay scales
+    window.addEventListener('resize', () => {
+      if (!hasBeenClicked) animateHandToButton();
+    });
+
+    window.resetLowerThird = function() {
+      hasBeenClicked = false;
+      if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
+      lowerThird.style.left = '-100%';
+      lowerThird.classList.remove('auto-hide');
+      subscribeBtn.classList.remove('clicked');
+      const textSpan = subscribeBtn.querySelector('.btn-text');
+      textSpan.textContent = 'SUBSCRIBE';
+      hand.style.display = 'block';
+      hand.style.opacity = '0';
+      const fireworks = subscribeBtn.querySelectorAll('.firework');
+      fireworks.forEach(fw => fw.remove());
+      setTimeout(() => { lowerThird.style.left = '50px'; }, 100);
+      setTimeout(() => { animateHandToButton(); }, 650);
+    };
+
+    // Manual controls instead of auto-reset
+    const urlParams = new URLSearchParams(window.location.search);
+    const autoHide = urlParams.get('autoHide') === '1'; // Optional auto-hide with ?autoHide=1
+    
+    // Add keyboard controls to show/hide overlay
+    document.addEventListener('keydown', (e) => {
+      // F1 = Show overlay, F2 = Hide overlay, F3 = Reset/restart
+      if (e.key === 'F1') {
+        if (lowerThird.classList.contains('auto-hide')) {
+          lowerThird.classList.remove('auto-hide');
+          lowerThird.style.left = '50px';
+          setTimeout(() => { animateHandToButton(); }, 500);
+        }
+      } else if (e.key === 'F2') {
+        lowerThird.classList.add('auto-hide');
+      } else if (e.key === 'F3') {
+        window.resetLowerThird();
+      }
+    });
+    
+    // Add gamepad/controller support (Steam Deck, etc)
+    window.addEventListener('gamepadconnected', (e) => {
+      console.log(`Gamepad connected: ${e.gamepad.id}`);
+    });
+    
+    // Poll for controller input
+    let lastButtonState = [];
+    setInterval(() => {
+      const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+      for (let i = 0; i < gamepads.length; i++) {
+        const gamepad = gamepads[i];
+        if (!gamepad) continue;
+        
+        // First time initialization of button state array
+        if (!lastButtonState[i]) {
+          lastButtonState[i] = [];
+          for (let j = 0; j < gamepad.buttons.length; j++) {
+            lastButtonState[i][j] = gamepad.buttons[j].pressed;
+          }
+          continue;
+        }
+        
+        // Check for button state changes
+        for (let j = 0; j < gamepad.buttons.length; j++) {
+          const buttonPressed = gamepad.buttons[j].pressed;
+          if (buttonPressed && !lastButtonState[i][j]) {
+            // Button was just pressed
+            console.log(`Gamepad ${i} button ${j} pressed`);
+            
+            // Button 0 (typically A on Xbox/Steam Deck) = Show
+            if (j === 0) {
+              if (lowerThird.classList.contains('auto-hide')) {
+                lowerThird.classList.remove('auto-hide');
+                lowerThird.style.left = '50px';
+                setTimeout(() => { animateHandToButton(); }, 500);
+              }
+            }
+            // Button 1 (typically B on Xbox/Steam Deck) = Hide
+            else if (j === 1) {
+              lowerThird.classList.add('auto-hide');
+            }
+            // Button 2 (typically X on Xbox/Steam Deck) = Reset
+            else if (j === 2) {
+              window.resetLowerThird();
+            }
+          }
+          lastButtonState[i][j] = buttonPressed;
+        }
+      }
+    }, 100);
+  </script>
+</body>
+</html>

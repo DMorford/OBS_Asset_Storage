@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lower Third Overlay (OBS)</title>
+  <!-- This file mirrors public/overlays/lower-third.html but searches assets in obs/assets first -->
+</head>
+<body>
+  <!-- We'll load the real overlay via an iframe so we can remap asset paths without editing original -->
+  <iframe id="overlayFrame" style="position:fixed;inset:0;border:0;width:100vw;height:100vh;background:transparent" allowtransparency="true"></iframe>
+
+  <script>
+    // Build a URL to the original overlay but rewrite asset paths to obs/assets via a base href
+    const base = window.location.origin;
+    const original = base + '/public/overlays/lower-third.html' + window.location.search;
+
+    // Fetch the original file and inject a <base href> and asset fallback logic
+    fetch(original).then(r => r.text()).then(html => {
+      // Inject a <base> pointing to /obs/ to make relative paths resolve there first
+      const patched = html.replace(/<head>/i, '<head>\n  <base href="/obs/" />');
+
+      // Also adjust asset JS to try obs/assets/ first then original assets/
+      const enhanced = patched.replace(/const candidates = \[/g, (m) => m)
+        .replace(/'assets\//g, (m) => `'assets/`) // leave as-is, base href will redirect to /obs/
+        .replace(/const base = window\.location\.pathname[^;]+;/g, "const base = window.location.pathname.replace(/[^/]+$/, '');");
+
+      const doc = new Blob([enhanced], { type: 'text/html' });
+      const url = URL.createObjectURL(doc);
+      document.getElementById('overlayFrame').src = url;
+    }).catch(err => {
+      document.body.innerHTML = '<div style="color:white">Failed to load overlay: ' + err + '</div>';
+    });
+  </script>
+</body>
+</html>
